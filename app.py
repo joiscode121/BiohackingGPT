@@ -22,6 +22,9 @@ logger = logging.getLogger(__name__)
 
 # Load environment variables
 load_dotenv()
+api_key = os.getenv("OPENAI_API_KEY")
+embeddings = OpenAIEmbeddings(openai_api_key=api_key)
+llm = ChatOpenAI(openai_api_key=api_key)
 
 # Initialize session state
 if 'vector_store' not in st.session_state:
