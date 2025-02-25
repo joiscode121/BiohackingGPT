@@ -6,3 +6,4 @@ python-dotenv
 openai
 tiktoken
 pysqlite3-binary 
+langchain-community
