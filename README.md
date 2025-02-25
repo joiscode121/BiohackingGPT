@@ -26,7 +26,7 @@ A Streamlit-based chatbot that helps users understand and implement biohacking p
 1. **Clone the Repository**
    ```bash
    git clone <repository-url>
-   cd Simple-Rag-app
+   cd BiohackingGPT
    ```
 
 2. **Set Up Python Environment**
