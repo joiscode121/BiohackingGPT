@@ -1,6 +1,6 @@
-__import__('pysqlite3')
+__import__('pysqlite3_binary')
 import sys
-sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3_binary')
 
 import streamlit as st
 import os
