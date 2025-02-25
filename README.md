@@ -11,7 +11,7 @@ A Streamlit-based chatbot that helps users understand and implement biohacking p
 ## 🛠️ Technology Stack & Why We Chose It
 
 ### Core Technologies
-- **Streamlit**: Chosen for rapid development of web interfaces and built-in chat components. Easily spins up an integrated frontend and backed and it's simple API and cloud hosting feature made it perfect for our chat application.
+- **Streamlit**: Chosen for rapid development of web interfaces and built-in chat components. Easily spins up an integrated frontend and backend and its simple API and cloud hosting feature made it perfect for our chat application.
 - **LangChain**: Selected for its robust RAG implementation and easy integration with various LLMs and vector stores.
 - **ChromaDB**: Used as our vector store due to its simplicity, persistence capabilities, and good performance for small to medium datasets.
 - **OpenAI GPT-3.5**: Chosen for its strong performance in natural language understanding and reasonable cost-effectiveness.
