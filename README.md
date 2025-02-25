@@ -11,15 +11,15 @@ A Streamlit-based chatbot that helps users understand and implement biohacking p
 ## 🛠️ Technology Stack & Why We Chose It
 
 ### Core Technologies
-- **Streamlit**: Chosen for rapid development of web interfaces and built-in chat components. Its reactive nature and simple API made it perfect for our chat application.
+- **Streamlit**: Chosen for rapid development of web interfaces and built-in chat components. Easily spins up an integrated frontend and backed and it's simple API and cloud hosting feature made it perfect for our chat application.
 - **LangChain**: Selected for its robust RAG implementation and easy integration with various LLMs and vector stores.
 - **ChromaDB**: Used as our vector store due to its simplicity, persistence capabilities, and good performance for small to medium datasets.
 - **OpenAI GPT-3.5**: Chosen for its strong performance in natural language understanding and reasonable cost-effectiveness.
 
 ### Design Decisions
-- **File-based Protocols**: Markdown files for protocols ensure easy maintenance and version control.
-- **JSONL for Metrics**: Simple, append-only format that's perfect for logging and easy to parse.
-- **Local Vector Store**: ChromaDB's local storage eliminates the need for external databases while maintaining good performance.
+- **File-based Protocols**: Markdown files were chosen for storing various biohacking protocols ensuring easy maintenance and version control.
+- **JSONL for Metrics**: Simple, append-only format that's perfect for logging and parsing as well as easy to integrate with Python.
+- **Local Vector Store**: ChromaDB's local storage is simple and has great performance.
 
 ## 📋 Setup Instructions
 
