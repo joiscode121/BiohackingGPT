@@ -78,10 +78,10 @@ A Streamlit-based chatbot that helps users understand and implement biohacking p
    - **Solution**: Currently using a single response mode with comprehensive but accessible information
    - **Future**: Could implement response modes using different prompt templates
 
-3. **Vector Store Performance**
-   - **Challenge**: Initial setup with FAISS had memory issues
-   - **Solution**: Switched to ChromaDB for better local performance
-   - **Future**: Would benchmark different vector stores for larger datasets
+3. **Vite & React Frontend**
+   - **Challenge**: Initial setup with Vite/React and FastAPI had backend connection issues
+   - **Solution**: Switched to Streamlit for more simple and efficient deployment
+   - **Future**: Would make more interactive, responsive, and detailed user interface
 
 ## 🚀 Future Improvements
 
@@ -100,8 +100,8 @@ A Streamlit-based chatbot that helps users understand and implement biohacking p
 3. **User Experience**
    - Add user authentication
    - Implement conversation memory
-   - Add protocol visualization
-   - Create a protocol suggestion system
+   - Add visualization
+   - Create a suggestion system
 
 4. **Infrastructure**
    - Containerize the application
@@ -114,11 +114,3 @@ A Streamlit-based chatbot that helps users understand and implement biohacking p
    - Add scientific references
    - Implement automatic protocol updates
    - Add multimedia content support
-
-## 📝 Contributing
-
-Feel free to submit issues and enhancement requests!
-
-## 📄 License
-
-[MIT License](LICENSE)
