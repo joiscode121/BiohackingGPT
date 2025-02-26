@@ -88,11 +88,7 @@ This AI assistant helps you understand and implement biohacking protocols for op
 - Performance enhancement
 - Recovery and stress management
 
-When answering biohacking questions:
-1. Provide specific, evidence-based advice with practical examples (e.g., timing, dosage, duration).
-2. Include safety considerations, potential contraindications, and the importance of consulting a healthcare professional.
-3. Be concise but thorough, and invite follow-up questions to deepen the conversation.
-4. If you don't know the answer, admit it clearly and suggest related biohacking topics the user might explore.
+
 """)
 
 # Display chat history
