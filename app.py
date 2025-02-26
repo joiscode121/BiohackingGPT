@@ -135,71 +135,71 @@ def retrieve_documents(vectorstore, query):
 
 # Main QA retrieval logic
     if st.session_state.vector_store:
-    llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.1)
+        llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.1)
+        
+        prompt_template = """You are a knowledgeable biohacking assistant. Your goal is to help users optimize their health and performance through evidence-based protocols and interventions.
     
-    prompt_template = """You are a knowledgeable biohacking assistant. Your goal is to help users optimize their health and performance through evidence-based protocols and interventions.
-
-    When answering biohacking questions:
-    1. Provide specific, evidence-based advice with practical examples (e.g., timing, dosage, duration).
-    2. Include safety considerations, potential contraindications, and the importance of consulting a healthcare professional.
-    3. Be concise but thorough, and invite follow-up questions to deepen the conversation.
-    4. If you don't know the answer, admit it clearly and suggest related biohacking topics the user might explore.
-
-    Context: {context}
-
-    Question: {question}
-
-    Answer: """
-    PROMPT = PromptTemplate(
-        template=prompt_template, input_variables=["context", "question"]
-    )
+        When answering biohacking questions:
+        1. Provide specific, evidence-based advice with practical examples (e.g., timing, dosage, duration).
+        2. Include safety considerations, potential contraindications, and the importance of consulting a healthcare professional.
+        3. Be concise but thorough, and invite follow-up questions to deepen the conversation.
+        4. If you don't know the answer, admit it clearly and suggest related biohacking topics the user might explore.
     
-    qa = RetrievalQA.from_chain_type(
-        llm=llm,
-        chain_type="stuff",
-        retriever=st.session_state.vector_store.as_retriever(search_kwargs={"k": 5}),
-        chain_type_kwargs={"prompt": PROMPT}
-    )
+        Context: {context}
     
-    # Get answer with enhanced error handling and debug logging
-    with st.chat_message("assistant"):
-        with st.spinner("Analyzing protocols..."):
-            try:
-                logger.info(f"Invoking QA with question: {question}")
-                # Check if the retriever returns valid documents
-                docs = st.session_state.vector_store.similarity_search(question, k=5)
-                logger.info(f"Retriever found {len(docs)} documents: {[doc.page_content[:50] + '...' if doc.page_content else 'None' for doc in docs]}")
-                
-                response = qa.invoke(question)
-                logger.info(f"QA response: {response}")
-                
-                # Ensure response["result"] exists, isn’t empty, and is a string
-                if not response or "result" not in response or not response["result"] or response["result"].strip() == "":
-                    answer = "I’m sorry, I don’t have enough information to answer that question about biohacking. Could you ask about a specific topic like sleep, exercise, or nutrition? I can provide more detailed advice there."
-                else:
-                    answer = response["result"].strip()
-                
-                latency = time.time() - start_time
-                
-                # Log to evaluator
-                if st.session_state.evaluator:
-                    st.session_state.evaluator.log_interaction(
-                        question=question,
-                        response=answer,
-                        latency=latency
-                    )
-                
-                st.write(answer)
-                st.session_state.chat_history.append({"role": "assistant", "content": answer})
-            except Exception as e:
-                logger.error(f"Error processing question: {str(e)} with question: {question}")
-                # Try to provide a more specific fallback for this error
-                if str(e).startswith("1 validation error for Document"):
-                    st.error("An error occurred processing your question. I might not have enough data for this topic. Please try a more specific question or ask about sleep, exercise, or nutrition.")
-                else:
-                    st.error(f"An error occurred: {str(e)}. Please try again or ask a different question.")
-else:
-    st.error("Vector store not initialized. Please check the logs for errors.")
+        Question: {question}
+    
+        Answer: """
+        PROMPT = PromptTemplate(
+            template=prompt_template, input_variables=["context", "question"]
+        )
+        
+        qa = RetrievalQA.from_chain_type(
+            llm=llm,
+            chain_type="stuff",
+            retriever=st.session_state.vector_store.as_retriever(search_kwargs={"k": 5}),
+            chain_type_kwargs={"prompt": PROMPT}
+        )
+        
+        # Get answer with enhanced error handling and debug logging
+        with st.chat_message("assistant"):
+            with st.spinner("Analyzing protocols..."):
+                try:
+                    logger.info(f"Invoking QA with question: {question}")
+                    # Check if the retriever returns valid documents
+                    docs = st.session_state.vector_store.similarity_search(question, k=5)
+                    logger.info(f"Retriever found {len(docs)} documents: {[doc.page_content[:50] + '...' if doc.page_content else 'None' for doc in docs]}")
+                    
+                    response = qa.invoke(question)
+                    logger.info(f"QA response: {response}")
+                    
+                    # Ensure response["result"] exists, isn’t empty, and is a string
+                    if not response or "result" not in response or not response["result"] or response["result"].strip() == "":
+                        answer = "I’m sorry, I don’t have enough information to answer that question about biohacking. Could you ask about a specific topic like sleep, exercise, or nutrition? I can provide more detailed advice there."
+                    else:
+                        answer = response["result"].strip()
+                    
+                    latency = time.time() - start_time
+                    
+                    # Log to evaluator
+                    if st.session_state.evaluator:
+                        st.session_state.evaluator.log_interaction(
+                            question=question,
+                            response=answer,
+                            latency=latency
+                        )
+                    
+                    st.write(answer)
+                    st.session_state.chat_history.append({"role": "assistant", "content": answer})
+                except Exception as e:
+                    logger.error(f"Error processing question: {str(e)} with question: {question}")
+                    # Try to provide a more specific fallback for this error
+                    if str(e).startswith("1 validation error for Document"):
+                        st.error("An error occurred processing your question. I might not have enough data for this topic. Please try a more specific question or ask about sleep, exercise, or nutrition.")
+                    else:
+                        st.error(f"An error occurred: {str(e)}. Please try again or ask a different question.")
+    else:
+        st.error("Vector store not initialized. Please check the logs for errors.")
 
 # Cache vector store initialization
 @st.cache_resource
