@@ -155,7 +155,12 @@ if question:
             with st.spinner("Analyzing protocols..."):
                 try:
                     response = qa.invoke(question)
-                    answer = response["result"]
+                    # Ensure response["result"] exists and isn’t empty/None
+                    if not response or "result" not in response or not response["result"].strip():
+                        answer = "I’m sorry, I don’t have enough information to answer that question about biohacking. Could you ask about a specific topic like sleep, exercise, or nutrition? I can provide more detailed advice there."
+                    else:
+                        answer = response["result"]
+                        
                     latency = time.time() - start_time
                     
                     # Log to evaluator
