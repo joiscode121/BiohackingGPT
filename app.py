@@ -191,6 +191,12 @@ def initialize_vector_store():
                     with open(os.path.join(protocol_dir, filename), 'r', encoding='utf-8') as f:
                         protocol_texts.append(f.read())
 
+            # Check if protocol_texts is empty
+            if not protocol_texts:
+                logger.warning("No protocol files found in 'protocols' directory.")
+                st.warning("No biohacking protocols found. Please add .md files to the 'protocols' directory.")
+                return None  # Return None to indicate failure gracefully
+
             # Split text into chunks
             text_splitter = RecursiveCharacterTextSplitter(
                 chunk_size=500,
@@ -199,7 +205,15 @@ def initialize_vector_store():
             )
             chunks = []
             for text in protocol_texts:
-                chunks.extend(text_splitter.split_text(text))
+                split_chunks = text_splitter.split_text(text)
+                if split_chunks:  # Ensure no None or empty results
+                    chunks.extend(split_chunks)
+
+            # Ensure chunks isn’t empty
+            if not chunks:
+                logger.error("No valid chunks created from protocol texts.")
+                st.error("Failed to process protocol texts into chunks.")
+                return None
 
             # Create embeddings and vector store
             api_key = os.getenv("OPENAI_API_KEY")
