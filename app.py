@@ -134,59 +134,58 @@ def retrieve_documents(vectorstore, query):
     return docs
 
 # Main QA retrieval logic
-if st.session_state.vector_store:
-    llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.1)
-
-    prompt_template = """You are a knowledgeable biohacking assistant. Your goal is to help users optimize their health and performance through evidence-based protocols and interventions.
-
-    When answering biohacking questions:
-    1. Provide specific, evidence-based advice with practical examples (e.g., timing, dosage, duration).
-    2. Include safety considerations, potential contraindications, and the importance of consulting a healthcare professional.
-    3. Be concise but thorough, and invite follow-up questions to deepen the conversation.
-    4. If you don't know the answer, admit it clearly and suggest related biohacking topics the user might explore.
-
-    Context: {context}
-
-    Question: {question}
-
-    Answer: """
-    PROMPT = PromptTemplate(
-        template=prompt_template, input_variables=["context", "question"]
-    )
-
-    qa = RetrievalQA.from_chain_type(
-        llm=llm,
-        chain_type="stuff",
-        retriever=st.session_state.vector_store.as_retriever(search_kwargs={"k": 5}),
-        chain_type_kwargs={"prompt": PROMPT}
-    )
-
-    with st.chat_message("assistant"):
-        with st.spinner("Analyzing protocols..."):
-            try:
-                docs = retrieve_documents(st.session_state.vector_store, question)
-                
-                if not docs:  # **New Check: If no docs, return a fallback message**
-                    answer = "I’m sorry, I don’t have enough information to answer that question about biohacking. Could you ask about a specific topic like sleep, exercise, or nutrition? I can provide more detailed advice there."
-                else:
-                    response = qa.invoke(question)
-                    answer = response["result"] if response and "result" in response and response["result"].strip() else "I’m sorry, I don’t have enough information to answer."
-
-                latency = time.time() - start_time
-
-                if st.session_state.evaluator:
-                    st.session_state.evaluator.log_interaction(
-                        question=question,
-                        response=answer,
-                        latency=latency
-                    )
-
-                st.write(answer)
-                st.session_state.chat_history.append({"role": "assistant", "content": answer})
-            except Exception as e:
-                logger.error(f"Error processing question: {str(e)}")
-                st.error(f"An error occurred: {str(e)}. Please try again or ask a different question.")
-
+    if st.session_state.vector_store:
+        llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.1)
+    
+        prompt_template = """You are a knowledgeable biohacking assistant. Your goal is to help users optimize their health and performance through evidence-based protocols and interventions.
+    
+        When answering biohacking questions:
+        1. Provide specific, evidence-based advice with practical examples (e.g., timing, dosage, duration).
+        2. Include safety considerations, potential contraindications, and the importance of consulting a healthcare professional.
+        3. Be concise but thorough, and invite follow-up questions to deepen the conversation.
+        4. If you don't know the answer, admit it clearly and suggest related biohacking topics the user might explore.
+    
+        Context: {context}
+    
+        Question: {question}
+    
+        Answer: """
+        PROMPT = PromptTemplate(
+            template=prompt_template, input_variables=["context", "question"]
+        )
+    
+        qa = RetrievalQA.from_chain_type(
+            llm=llm,
+            chain_type="stuff",
+            retriever=st.session_state.vector_store.as_retriever(search_kwargs={"k": 5}),
+            chain_type_kwargs={"prompt": PROMPT}
+        )
+    
+        with st.chat_message("assistant"):
+            with st.spinner("Analyzing protocols..."):
+                try:
+                    docs = retrieve_documents(st.session_state.vector_store, question)
+                    
+                    if not docs:  # **New Check: If no docs, return a fallback message**
+                        answer = "I’m sorry, I don’t have enough information to answer that question about biohacking. Could you ask about a specific topic like sleep, exercise, or nutrition? I can provide more detailed advice there."
+                    else:
+                        response = qa.invoke(question)
+                        answer = response["result"] if response and "result" in response and response["result"].strip() else "I’m sorry, I don’t have enough information to answer."
+    
+                    latency = time.time() - start_time
+    
+                    if st.session_state.evaluator:
+                        st.session_state.evaluator.log_interaction(
+                            question=question,
+                            response=answer,
+                            latency=latency
+                        )
+    
+                    st.write(answer)
+                    st.session_state.chat_history.append({"role": "assistant", "content": answer})
+                except Exception as e:
+                    logger.error(f"Error processing question: {str(e)}")
+                    st.error(f"An error occurred: {str(e)}. Please try again or ask a different question.")
     else:
         st.error("Vector store not initialized. Please check the logs for errors.")
 
