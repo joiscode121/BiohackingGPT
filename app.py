@@ -182,27 +182,40 @@ if question:
 
 # Cache vector store initialization
 @st.cache_resource
+@st.cache_resource
 def initialize_vector_store():
     try:
         with st.spinner("Loading biohacking protocols..."):
             protocol_texts = []
             protocol_dir = os.path.join(os.path.dirname(__file__), "protocols")
+            
+            # Ensure protocols directory exists
             if not os.path.exists(protocol_dir):
                 os.makedirs(protocol_dir)
                 logger.info(f"Created protocols directory at {protocol_dir}")
 
+            # Load and validate protocol files
             for filename in os.listdir(protocol_dir):
                 if filename.endswith(".md"):
-                    with open(os.path.join(protocol_dir, filename), 'r', encoding='utf-8') as f:
-                        protocol_texts.append(f.read())
+                    filepath = os.path.join(protocol_dir, filename)
+                    try:
+                        with open(filepath, 'r', encoding='utf-8') as f:
+                            content = f.read().strip()  # Remove leading/trailing whitespace
+                            if content:  # Only include non-empty content
+                                protocol_texts.append(content)
+                            else:
+                                logger.warning(f"Skipping empty file: {filename}")
+                    except Exception as e:
+                        logger.error(f"Failed to read {filename}: {str(e)}")
+                        continue  # Skip this file and continue with others
 
-            # Check if protocol_texts is empty
+            # Check if any valid protocols were loaded
             if not protocol_texts:
-                logger.warning("No protocol files found in 'protocols' directory.")
+                logger.warning("No valid protocol files found in 'protocols' directory.")
                 st.warning("No biohacking protocols found. Please add .md files to the 'protocols' directory.")
-                return None  # Return None to indicate failure gracefully
+                return None
 
-            # Split text into chunks
+            # Split text into chunks with validation
             text_splitter = RecursiveCharacterTextSplitter(
                 chunk_size=500,
                 chunk_overlap=100,
@@ -211,17 +224,27 @@ def initialize_vector_store():
             chunks = []
             for text in protocol_texts:
                 split_chunks = text_splitter.split_text(text)
-                if split_chunks:  # Ensure no None or empty results
-                    chunks.extend(split_chunks)
+                # Filter out None, empty strings, or whitespace-only chunks
+                valid_chunks = [chunk for chunk in split_chunks if chunk and chunk.strip()]
+                if valid_chunks:
+                    chunks.extend(valid_chunks)
+                else:
+                    logger.warning(f"No valid chunks generated from text: {text[:50]}...")
 
-            # Ensure chunks isn’t empty
+            # Ensure chunks isn’t empty or contains only invalid data
             if not chunks:
                 logger.error("No valid chunks created from protocol texts.")
-                st.error("Failed to process protocol texts into chunks.")
+                st.error("Failed to process protocol texts into valid chunks. Please check your protocol files.")
                 return None
+
+            # Add debug logging to verify chunks
+            logger.info(f"Number of valid chunks: {len(chunks)}")
+            logger.info(f"Sample chunk: {chunks[0] if chunks else 'None'}")
 
             # Create embeddings and vector store
             api_key = os.getenv("OPENAI_API_KEY")
+            if not api_key:
+                raise ValueError("OPENAI_API_KEY environment variable not set")
             embeddings = OpenAIEmbeddings(openai_api_key=api_key)
             vector_store = Chroma.from_texts(
                 texts=chunks,
