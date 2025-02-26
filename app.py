@@ -122,16 +122,6 @@ if question:
     # Add user message to chat history
     st.session_state.chat_history.append({"role": "user", "content": question})
     
-    # Create retrieval chain
-    # Function to retrieve documents and check if empty
-def retrieve_documents(vectorstore, query):
-    docs = vectorstore.similarity_search(query)
-
-    if not docs:  # **Ensure no empty retrieval**
-        logger.warning("No relevant documents retrieved.")
-        return None
-
-    return docs
 
 # Main QA retrieval logic
     if st.session_state.vector_store:
