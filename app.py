@@ -243,4 +243,4 @@ def initialize_vector_store():
 # Initialize vector store if not already done
 if st.session_state.vector_store is None:
     st.session_state.vector_store = initialize_vector_store()
-    st.write("Vector store status:", "Initialized" if st.session_state.vector_store else "Failed")
+
