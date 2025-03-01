@@ -98,8 +98,8 @@ if question:
     start_time = time.time()
     
     # Define biohacking scope
-    biohacking_topics = ["exercise", "nutrition", "stress", "recovery", "performance", "daily routines", "habits", "sleep", "biohacking"]
-    is_in_scope = any(topic in question_lower for topic in biohacking_topics) or "biohacking" in question_lower.split()
+    biohacking_topics = ["exercise", "nutrition", "stress", "recovery", "performance", "daily routines", "habits", "sleep"]
+    is_in_scope = any(topic in question_lower for topic in biohacking_topics) or "nutrition" in question_lower.split()
     
     # Display user message
     with st.chat_message("user"):
@@ -136,7 +136,7 @@ if question:
                     logger.info(f"Documents retrieved for question '{question}': {[doc.page_content for doc in docs]}")
                     if not docs:
                         logger.warning("No documents retrieved for question: %s", question)
-                        answer = "I don’t have enough specific biohacking data for this question. Here’s a general response instead."
+                        answer = "I don’t have enough specific biohacking data for this nutrition question. Here’s a general response instead."
                     else:
                         response = qa.invoke(question)
                         logger.info(f"QA response: {response}")
@@ -157,7 +157,7 @@ if question:
             with st.spinner("Thinking..."):
                 try:
                     llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.7, openai_api_key=api_key)
-                    general_prompt = f"""You are a helpful biohacking assistant. Provide a concise, informative response to the following question about biohacking, nutrition, or health optimization. If it’s unrelated to biohacking, answer generally; if it’s biohacking-related but lacks specific data, give a broad but useful reply and suggest consulting an expert where applicable.
+                    general_prompt = f"""You are a helpful biohacking assistant. Provide a concise, informative response to the following question about nutrition or biohacking. If it’s unrelated to biohacking, answer generally; if it’s biohacking-related but lacks specific data, give a broad but useful reply and suggest consulting an expert where applicable.
 
                     Question: {question}
                     Answer: """
